@@ -36,5 +36,5 @@ I had trouble finding a simple template for NixOS to setup up a python developme
 
 ## Usage 🧐
 
-Use `uv run python` to run the configured python interpreter. To manage dependencies use `uv add <package>` and `uv remove <package>`. If `pyproject.toml` is updated, run `uv lock` to regenerate the `uv.lock` file.
+Use `uv run python` to run the configured python interpreter. To manage dependencies use `uv add <package>` and `uv remove <package>`. If `pyproject.toml` is modified directly without using `uv` commands, run `uv lock` to regenerate the `uv.lock` file.
 
