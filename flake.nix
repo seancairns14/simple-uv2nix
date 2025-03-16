@@ -39,16 +39,23 @@
       let
         workspaceRoot = ./.;
         venvName = "venv";
-        envPythonVersion = builtins.getEnv "PYTHON_VERSION"; 
-        defaultPythonVersion = "python312";
-        pythonVersion = if envPythonVersion != "" then envPythonVersion else defaultPythonVersion;
+        
+        versionFilePath = ./.python-version;
+        # Read Python version from the .python-version file
+        versionContents = builtins.readFile versionFilePath;
+         pythonVersion = builtins.substring 0 (builtins.stringLength versionContents - 1) versionContents;
+        # Use lib.replaceStrings to format the version (replace . with "")
+        pythonVersionFormatted = if pythonVersion != "" then
+          "python" + (nixpkgs.lib.replaceStrings [ "." ] [ "" ] pythonVersion)
+        else
+          "python312";  # Default if not set in .env or environment
 
         pkgs = import nixpkgs {
           inherit system;
           config.allowUnfree = true;
         };
 
-        python = pkgs.${pythonVersion};
+        python = pkgs.${pythonVersionFormatted};
 
         workspace = inputs.uv2nix.lib.workspace.loadWorkspace { workspaceRoot = workspaceRoot; };
         overlay = workspace.mkPyprojectOverlay {
