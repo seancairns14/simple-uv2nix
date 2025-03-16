@@ -19,14 +19,14 @@ else
   echo "No packages provided. Skipping package installation."
 fi
 
-# Install comfy-script and freeze requirements
-echo "Installing comfy-script and freezing requirements..."
+# Freeze requirements
+echo "Freezing requirements..."
 nix run nixpkgs#uv -- pip freeze > requirements.txt
 
-# Install pdm and initialize project
+# Install pdm and update pyproject.toml
 echo "Installing pdm and initializing project..."
 nix run nixpkgs#uv -- pip install -U pdm
-nix run nixpkgs#uv -- run pdm init
+nix run nixpkgs#uv -- run pdm import requirements.txt 
 
 # Lock dependencies
 echo "Locking dependencies..."
