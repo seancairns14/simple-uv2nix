@@ -28,7 +28,6 @@
     };
   };
 
-
   outputs =
     inputs@{
       nixpkgs,
@@ -40,12 +39,17 @@
       let
         workspaceRoot = ./.;
         venvName = "venv";
-        python = pkgs.python310;
+        envPythonVersion = builtins.getEnv "PYTHON_VERSION"; 
+        defaultPythonVersion = "python312";
+        pythonVersion = if envPythonVersion != "" then envPythonVersion else defaultPythonVersion;
 
-	pkgs = import nixpkgs {
-	  inherit system;
-	  config.allowUnfree = true;
-	};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
+
+        python = pkgs.${pythonVersion};
+
         workspace = inputs.uv2nix.lib.workspace.loadWorkspace { workspaceRoot = workspaceRoot; };
         overlay = workspace.mkPyprojectOverlay {
           sourcePreference = "wheel";
@@ -67,6 +71,9 @@
             pkgs.uv
             venv
           ];
+          shellHook = ''
+            echo "Using Python version: ${pythonVersion}"
+          '';
         };
       }
     );
