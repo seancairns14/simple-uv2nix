@@ -23,6 +23,7 @@ sed -i "s/python = \"[^\"]*\"/python = \">=$PYTHON_VERSION\"/" pyproject.toml
 
 # Step 3: Run nix to lock uv
 nix run nixpkgs#uv lock
+nix run nixpkgs#uv -- venv --python="${PYTHON_VERSION}" 
 
 # Step 4: Stage the modified files for commit
 git add flake.nix uv.lock pyproject.toml .python-version
